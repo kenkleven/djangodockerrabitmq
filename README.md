@@ -1,0 +1,2 @@
+# djangodockerrabitmq
+django docker rabbitmq
