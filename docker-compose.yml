@@ -1,0 +1,43 @@
+version: '3.11'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 'python manage.py runserver 0.0.0.0:8000'
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - rabbitmq  # Dépendance à RabbitMQ
+
+  db:
+    image: mysql
+    container_name: mysql
+    hostname: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: cinema
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./mysql-data:/var/lib/mysql # Monte le volume dans un dossier local
+    ports:
+      - "3306:3306"
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    hostname: mysql
+    ports:
+      - "5672:5672" # Port pour RabbitMQ
+      - "15672:15672" # Port pour l'interface management
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - ./rabbitmq-data:/var/lib/rabbitmq  # Monte le volume pour persistance des données
+
+volumes:
+  dbdata:
